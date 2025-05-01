@@ -6,6 +6,7 @@ import DataTable from './components/DataTable'
 import SalesChart from './components/SalesChart'
 import ProductSalesChart from './components/ProductSalesChart'
 import CustomerSalesChart from './components/CustomerSalesChart'
+import KPICards from './components/KPICards'
 
 function App() {
   const [refresh, setRefresh] = useState(false);
@@ -28,6 +29,7 @@ function App() {
       <div style={{ padding: '20px' }}>
         <h1>Data Insights Dashboard</h1>
         <FileUpload onUploadComplete={handleRefresh} />
+        <KPICards refresh={refresh} />
         <DataTable refresh={refresh} />
         <SalesChart refresh={refresh} />
         <ProductSalesChart refresh={refresh} />
