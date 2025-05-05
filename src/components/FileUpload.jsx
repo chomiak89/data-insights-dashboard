@@ -5,49 +5,60 @@ import Papa from 'papaparse';
 
 function FileUpload({ onUploadComplete }) {
   const [uploading, setUploading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
+
+    setUploading(true);
+    setError('');
+    setSuccess('');
 
     Papa.parse(file, {
       header: true,
-      skipEmptyLines: true,
-      complete: async function (results) {
-        console.log(results.data); // Preview parsed data
+      complete: async (results) => {
+        const { data } = results;
 
-        setUploading(true);
-        try {
-          const { data, error } = await supabase
-            .from('sales_data') // your table name
-            .insert(results.data);
+        // Clean data (remove empty rows)
+        const cleanData = data.filter((row) => row.amount && row.customer_name);
 
-          if (error) {
-            console.error(error);
-            setMessage('Error uploading data.');
-          } else {
-            console.log(data);
-            setMessage('Data uploaded successfully!');
-            if (onUploadComplete) {
-                onUploadComplete();
-            }
-          }
-        } catch (err) {
-          console.error(err);
-          setMessage('Unexpected error.');
+        const { error } = await supabase.from('sales_data').insert(cleanData);
+
+        if (error) {
+          setError('Upload failed: ' + error.message);
+        } else {
+          setSuccess('Upload successful!');
+          onUploadComplete();
         }
+
+        setUploading(false);
+      },
+      error: (err) => {
+        setError('Error parsing CSV: ' + err.message);
         setUploading(false);
       },
     });
   };
 
   return (
-    <div style={{ marginTop: '20px' }}>
-      <input type="file" accept=".csv" onChange={handleFileChange} />
-      {uploading && <p>Uploading...</p>}
-      {message && <p>{message}</p>}
+    <div className="bg-white border border-gray-200 p-6 rounded-lg shadow mb-6">
+      <h2 className="text-lg font-semibold mb-4 text-gray-700">Upload Sales CSV</h2>
+      <input type="file"
+        accept=".csv"
+        onChange={handleFileChange}
+        className="block w-full text-sm text-gray-700
+                   file:mr-4 file:py-2 file:px-4
+                   file:rounded file:border-0
+                   file:text-sm file:font-semibold
+                   file:bg-blue-50 file:text-blue-700
+                   hover:file:bg-blue-100"
+        disabled={uploading}
+      />
+      {uploading && <p className="text-sm text-blue-600 mt-2">Uploading...</p>}
+      {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
+      {success && <p className="text-sm text-green-600 mt-2">{success}</p>}
     </div>
   );
 }
