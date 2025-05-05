@@ -27,7 +27,7 @@ function App() {
   return (
     <>
       <div style={{ padding: '20px' }}>
-        <h1 class="text-3xl font-bold underline">Data Insights Dashboard</h1>
+        <h1 className="text-3xl font-bold underline">Data Insights Dashboard</h1>
         <FileUpload onUploadComplete={handleRefresh} />
         <KPICards refresh={refresh} />
         <DataTable refresh={refresh} />

@@ -37,7 +37,7 @@ function KPICards({ refresh }) {
   };
 
   return (
-    <div style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-6">
       <KPI title="Total Sales" value={`$${kpis.totalSales.toFixed(2)}`} />
       <KPI title="Transactions" value={kpis.totalTransactions} />
       <KPI title="Unique Customers" value={kpis.uniqueCustomers} />
@@ -48,16 +48,9 @@ function KPICards({ refresh }) {
 
 function KPI({ title, value }) {
   return (
-    <div style={{
-      flex: 1,
-      background: '#f7f7f7',
-      padding: '20px',
-      borderRadius: '10px',
-      boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-      textAlign: 'center'
-    }}>
-      <h3 style={{ marginBottom: '10px', color: '#555' }}>{title}</h3>
-      <p style={{ fontSize: '24px', fontWeight: 'bold' }}>{value}</p>
+    <div className="bg-white shadow-md rounded-xl p-5 border border-gray-200 hover:shadow-lg transition-shadow duration-200">
+      <h3 className="text-sm font-semibold text-gray-500 mb-2">{title}</h3>
+      <p className="text-2xl font-bold text-gray-800">{value}</p>
     </div>
   );
 }
